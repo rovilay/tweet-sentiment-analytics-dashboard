@@ -13,24 +13,24 @@ Parameters:
     Default: arn:aws:secretsmanager:us-east-1:122610488400:secret:social-media-analytics-secrets-manager-g0m3Pd
 
 Resources:
-  KinesisDataStreamStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub
-        - ${BucketURL}/infrastructure/kinesis-data-stream.yaml
-        - BucketURL: !Ref BucketURL
+  # KinesisDataStreamStack:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub
+  #       - ${BucketURL}/infrastructure/kinesis-data-stream.yaml
+  #       - BucketURL: !Ref BucketURL
 
-  DataCollectionFunctionStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub
-        - ${BucketURL}/infrastructure/data-collection-function.yaml
-        - BucketURL: !Ref BucketURL
-      Parameters:
-        BucketName: !Ref BucketName
-        EnvVariablesAndCredentials: !Ref EnvVariablesAndCredentials
-    DependsOn:
-      - KinesisDataStreamStack
+  # DataCollectionFunctionStack:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub
+  #       - ${BucketURL}/infrastructure/data-collection-function.yaml
+  #       - BucketURL: !Ref BucketURL
+  #     Parameters:
+  #       BucketName: !Ref BucketName
+  #       EnvVariablesAndCredentials: !Ref EnvVariablesAndCredentials
+  #   DependsOn:
+  #     - KinesisDataStreamStack
   
   DynamoDBTableStack:
     Type: AWS::CloudFormation::Stack
@@ -39,17 +39,17 @@ Resources:
         - ${BucketURL}/infrastructure/dynamodb-table.yaml
         - BucketURL: !Ref BucketURL
   
-  SentimentAnalysisFunctionStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub
-        - ${BucketURL}/infrastructure/sentiment-analysis-function.yaml
-        - BucketURL: !Ref BucketURL
-      Parameters:
-        BucketName: !Ref BucketName
-    DependsOn:
-      - DynamoDBTableStack
-      - KinesisDataStreamStack
+  # SentimentAnalysisFunctionStack:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub
+  #       - ${BucketURL}/infrastructure/sentiment-analysis-function.yaml
+  #       - BucketURL: !Ref BucketURL
+  #     Parameters:
+  #       BucketName: !Ref BucketName
+  #   DependsOn:
+  #     - DynamoDBTableStack
+  #     - KinesisDataStreamStack
 
   ApiHandlersFunctionStack:
     Type: AWS::CloudFormation::Stack
@@ -59,8 +59,19 @@ Resources:
       TemplateURL: !Sub
         - ${BucketURL}/infrastructure/api-handlers-function.yaml
         - BucketURL: !Ref BucketURL
+      Parameters:
+        BucketName: !Ref BucketName
 
-  ApiGateStack:
+  # TestApiGatewayStack:
+  #   Type: AWS::CloudFormation::Stack
+  #   DependsOn:
+  #     - ApiHandlersFunctionStack
+  #   Properties:
+  #     TemplateURL: !Sub
+  #       - ${BucketURL}/infrastructure/test-gateway.yaml
+  #       - BucketURL: !Ref BucketURL
+
+  ApiGatewayStack:
     Type: AWS::CloudFormation::Stack
     DependsOn:
       - ApiHandlersFunctionStack
